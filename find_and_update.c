@@ -12,31 +12,41 @@ void find(dataset* list, int id, dataset** node){
 }
 
 void update_status(dataset** list, int id, char status[]){
-    dataset* updated_node;
-    find(*list, id, &updated_node);
-    if (updated_node != NULL){
-        strcpy(updated_node->status, status);
+    if (*list != NULL){
+        dataset* updated_node;
+        find(*list, id, &updated_node);
+        if (updated_node != NULL){
+            strcpy(updated_node->status, status);
+        }
+        else {
+            printf("ID not found\n");
+        }
     }
     else {
-        printf("ID not found\n");
+        printf("List empty\n");
     }
 }
 
 void update_stock(dataset** list, int id, int amount){
-    dataset* updated_node;
-    find(*list, id, &updated_node);
-    if (updated_node != NULL){
-        if (updated_node->jumlah_stok - amount <0){
-            printf ("Requirement amount not available\n");
-            printf ("Available stock %d\n", updated_node->jumlah_stok);
+    if (*list != NULL){
+        dataset* updated_node;
+        find(*list, id, &updated_node);
+        if (updated_node != NULL){
+            if (updated_node->jumlah_stok - amount <0){
+                printf ("Requirement amount not available\n");
+                printf ("Available stock %d\n", updated_node->jumlah_stok);
+            }
+            else {
+                updated_node->jumlah_stok -= amount;
+                printf ("Stock updated\n");
+                printf ("Current stock of ID %d is %d\n", id, updated_node->jumlah_stok);
+            }
         }
         else {
-            updated_node->jumlah_stok -= amount;
-            printf ("Stock updated\n");
-            printf ("Current stock of ID %d is %d\n", id, updated_node->jumlah_stok);
+            printf("ID not found\n");
         }
     }
     else {
-        printf("ID not found\n");
+        printf("List empty\n");
     }
 }
