@@ -14,10 +14,10 @@
  * @param head Pointer to the head pointer of the linked list.
  */
 static void seed_data(dataset** head) {
-    add_item(head, 101, "Arduino Uno R3", "Mikrokontroler", 15, "Rak A1", "Tersedia", "Laboratorium", "Ahmad");
-    add_item(head, 102, "Sensor Ultrasonik HC-SR04", "Sensor", 20, "Kotak B2", "Tersedia", "Laboratorium", "Budi");
-    add_item(head, 103, "Raspberry Pi 4", "SBC", 5, "Rak A2", "Dipinjam", "Laboratorium", "Cici");
-    add_item(head, 104, "Motor Servo SG90", "Actuator", 0, "Kotak C1", "Habis", "Laboratorium", "Dodi");
+    add_item(head, 101, "Arduino Uno R3", "Mikrokontroler", 15, "Rak A1", 15, 0, 0, "Laboratorium", "Ahmad");
+    add_item(head, 102, "Sensor Ultrasonik HC-SR04", "Sensor", 20, "Kotak B2", 20, 0, 0, "Laboratorium", "Budi");
+    add_item(head, 103, "Raspberry Pi 4", "SBC", 5, "Rak A2", 0, 5, 0, "Laboratorium", "Cici");
+    add_item(head, 104, "Motor Servo SG90", "Actuator", 0, "Kotak C1", 0, 0, 0, "Laboratorium", "Dodi");
 }
 
 /**
@@ -92,7 +92,7 @@ static void menu_loop(dataset** head) {
                         printf("Kategori: %s\n", found_node->kategori);
                         printf("Stok    : %d\n", found_node->jumlah_stok);
                         printf("Lokasi  : %s\n", found_node->lokasi_penyimpanan);
-                        printf("Status  : %s\n", found_node->status);
+                        printf("Status (T/D/R): %d/%d/%d\n", found_node->status.tersedia, found_node->status.dipinjam, found_node->status.rusak);
                         printf("Pemilik : %s\n", found_node->pemilik);
                         printf("PIC     : %s\n", found_node->pic);
                     } else {
@@ -133,7 +133,7 @@ static void menu_loop(dataset** head) {
             }
             case 5: {
                 int id;
-                char new_status[20];
+                int tersedia, dipinjam, rusak;
                 printf("Masukkan ID Barang: ");
                 if (scanf("%d", &id) != 1) {
                     printf("[ERROR] ID tidak valid.\n");
@@ -142,14 +142,45 @@ static void menu_loop(dataset** head) {
                 }
                 clear_buffer();
 
-                printf("Masukkan Status Baru (Tersedia/Dipinjam/Rusak/Habis): ");
-                if (fgets(new_status, sizeof(new_status), stdin) != NULL) {
-                    size_t len = strlen(new_status);
-                    if (len > 0 && new_status[len-1] == '\n') {
-                        new_status[len-1] = '\0';
-                    }
+                dataset* found_node = NULL;
+                find(*head, id, &found_node);
+                if (found_node == NULL) {
+                    printf("[ERROR] ID %d tidak ditemukan.\n", id);
+                    break;
                 }
-                update_status(head, id, new_status);
+
+                printf("Masukkan Jumlah Tersedia Baru: ");
+                if (scanf("%d", &tersedia) != 1 || tersedia < 0) {
+                    printf("[ERROR] Jumlah tidak valid.\n");
+                    clear_buffer();
+                    break;
+                }
+                clear_buffer();
+
+                printf("Masukkan Jumlah Dipinjam Baru: ");
+                if (scanf("%d", &dipinjam) != 1 || dipinjam < 0) {
+                    printf("[ERROR] Jumlah tidak valid.\n");
+                    clear_buffer();
+                    break;
+                }
+                clear_buffer();
+
+                printf("Masukkan Jumlah Rusak Baru: ");
+                if (scanf("%d", &rusak) != 1 || rusak < 0) {
+                    printf("[ERROR] Jumlah tidak valid.\n");
+                    clear_buffer();
+                    break;
+                }
+                clear_buffer();
+
+                if (tersedia + dipinjam + rusak != found_node->jumlah_stok) {
+                    printf("[ERROR] Total status (%d) tidak sama dengan jumlah stok saat ini (%d)!\n", 
+                           (tersedia + dipinjam + rusak), found_node->jumlah_stok);
+                    break;
+                }
+
+                update_status(head, id, tersedia, dipinjam, rusak);
+                printf("[SUCCESS] Status barang berhasil diperbarui.\n");
                 break;
             }
             case 6:

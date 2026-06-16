@@ -26,7 +26,7 @@ static void read_line(char* dest, int max_len) {
     }
 }
 
-void add_item(dataset** head, int id, const char nama[], const char kategori[], int jumlah_stok, const char lokasi_penyimpanan[], const char status[], const char pemilik[], const char pic[]) {
+void add_item(dataset** head, int id, const char nama[], const char kategori[], int jumlah_stok, const char lokasi_penyimpanan[], int tersedia, int dipinjam, int rusak, const char pemilik[], const char pic[]) {
     // 1. Check for duplicate ID
     dataset* temp = *head;
     while (temp != NULL) {
@@ -58,8 +58,9 @@ void add_item(dataset** head, int id, const char nama[], const char kategori[], 
     strncpy(new_node->lokasi_penyimpanan, lokasi_penyimpanan, sizeof(new_node->lokasi_penyimpanan) - 1);
     new_node->lokasi_penyimpanan[sizeof(new_node->lokasi_penyimpanan) - 1] = '\0';
 
-    strncpy(new_node->status, status, sizeof(new_node->status) - 1);
-    new_node->status[sizeof(new_node->status) - 1] = '\0';
+    new_node->status.tersedia = tersedia;
+    new_node->status.dipinjam = dipinjam;
+    new_node->status.rusak = rusak;
 
     strncpy(new_node->pemilik, pemilik, sizeof(new_node->pemilik) - 1);
     new_node->pemilik[sizeof(new_node->pemilik) - 1] = '\0';
@@ -88,7 +89,9 @@ void add_item_from_input(dataset** head) {
     char kategori[20];
     int jumlah_stok;
     char lokasi_penyimpanan[20];
-    char status[20];
+    int tersedia;
+    int dipinjam;
+    int rusak;
     char pemilik[50];
     char pic[50];
 
@@ -119,8 +122,34 @@ void add_item_from_input(dataset** head) {
     printf("Masukkan Lokasi Penyimpanan: ");
     read_line(lokasi_penyimpanan, sizeof(lokasi_penyimpanan));
 
-    printf("Masukkan Status Barang (Tersedia/Dipinjam/Rusak/Habis): ");
-    read_line(status, sizeof(status));
+    printf("Masukkan Jumlah Tersedia: ");
+    if (scanf("%d", &tersedia) != 1 || tersedia < 0) {
+        printf("[ERROR] Input Jumlah Tersedia tidak valid.\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    printf("Masukkan Jumlah Dipinjam: ");
+    if (scanf("%d", &dipinjam) != 1 || dipinjam < 0) {
+        printf("[ERROR] Input Jumlah Dipinjam tidak valid.\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    printf("Masukkan Jumlah Rusak: ");
+    if (scanf("%d", &rusak) != 1 || rusak < 0) {
+        printf("[ERROR] Input Jumlah Rusak tidak valid.\n");
+        clear_input_buffer();
+        return;
+    }
+    clear_input_buffer();
+
+    if (tersedia + dipinjam + rusak != jumlah_stok) {
+        printf("[ERROR] Jumlah stok (%d) tidak sesuai dengan jumlah status Tersedia (%d) + Dipinjam (%d) + Rusak (%d)!\n", jumlah_stok, tersedia, dipinjam, rusak);
+        return;
+    }
 
     printf("Masukkan Pemilik Barang: ");
     read_line(pemilik, sizeof(pemilik));
@@ -129,5 +158,5 @@ void add_item_from_input(dataset** head) {
     read_line(pic, sizeof(pic));
 
     // Call add_item to perform insertion logic
-    add_item(head, id, nama, kategori, jumlah_stok, lokasi_penyimpanan, status, pemilik, pic);
+    add_item(head, id, nama, kategori, jumlah_stok, lokasi_penyimpanan, tersedia, dipinjam, rusak, pemilik, pic);
 }

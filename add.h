@@ -16,7 +16,7 @@
  * @param pemilik Owner of the item.
  * @param pic Person in Charge.
  */
-void add_item(dataset** head, int id, const char nama[], const char kategori[], int jumlah_stok, const char lokasi_penyimpanan[], const char status[], const char pemilik[], const char pic[]);
+void add_item(dataset** head, int id, const char nama[], const char kategori[], int jumlah_stok, const char lokasi_penyimpanan[], int tersedia, int dipinjam, int rusak, const char pemilik[], const char pic[]);
 
 /**
  * @brief Prompts user via serial monitor / terminal for item fields, performs validation,

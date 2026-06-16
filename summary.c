@@ -25,14 +25,10 @@ void show_summary(dataset* list) {
         total_jenis_barang++;
         total_stok += temp->jumlah_stok;
 
-        // Count status (case-insensitive checking or standard strcmp)
-        if (strcmp(temp->status, "Rusak") == 0 || strcmp(temp->status, "rusak") == 0) {
-            total_rusak++;
-        } else if (strcmp(temp->status, "Dipinjam") == 0 || strcmp(temp->status, "dipinjam") == 0) {
-            total_dipinjam++;
-        } else if (strcmp(temp->status, "Tersedia") == 0 || strcmp(temp->status, "tersedia") == 0) {
-            total_tersedia++;
-        } else if (strcmp(temp->status, "Habis") == 0 || strcmp(temp->status, "habis") == 0) {
+        total_tersedia += temp->status.tersedia;
+        total_dipinjam += temp->status.dipinjam;
+        total_rusak += temp->status.rusak;
+        if (temp->jumlah_stok == 0) {
             total_habis++;
         }
 
