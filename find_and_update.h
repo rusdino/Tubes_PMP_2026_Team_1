@@ -6,6 +6,6 @@ void find(dataset* list, int id, dataset** node);
 
 void update_status(dataset** list, int id, char status[]);
 
-void update_stock(dataset** list, int id, int amount);
+void update_stock(dataset** list, int id, int amount, char mode);
 
 #endif
