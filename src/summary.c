@@ -1,10 +1,11 @@
 #include "summary.h"
 #include <stdio.h>
+#include <avr/pgmspace.h>
 #include <string.h>
 
 void show_summary(dataset* list) {
     if (list == NULL) {
-        printf("[WARNING] List Empty. Tidak ada ringkasan statistik.\n");
+        printf_P(PSTR("[WARNING] List Empty. Tidak ada ringkasan statistik.\n"));
         return;
     }
 
@@ -51,21 +52,21 @@ void show_summary(dataset* list) {
         temp = temp->next;
     }
 
-    printf("\n==================================================\n");
-    printf("               RINGKASAN INVENTARIS               \n");
-    printf("==================================================\n");
-    printf("Total Jenis Komponen: %d\n", total_jenis_barang);
-    printf("Total Jumlah Stok   : %d\n", total_stok);
-    printf("--------------------------------------------------\n");
-    printf("Status Barang:\n");
-    printf("  - Tersedia : %d\n", total_tersedia);
-    printf("  - Dipinjam : %d\n", total_dipinjam);
-    printf("  - Rusak    : %d\n", total_rusak);
-    printf("  - Habis    : %d\n", total_habis);
-    printf("--------------------------------------------------\n");
-    printf("Statistik per Kategori:\n");
+    printf_P(PSTR("\n==================================================\n"));
+    printf_P(PSTR("               RINGKASAN INVENTARIS               \n"));
+    printf_P(PSTR("==================================================\n"));
+    printf_P(PSTR("Total Jenis Komponen: %d\n"), total_jenis_barang);
+    printf_P(PSTR("Total Jumlah Stok   : %d\n"), total_stok);
+    printf_P(PSTR("--------------------------------------------------\n"));
+    printf_P(PSTR("Status Barang:\n"));
+    printf_P(PSTR("  - Tersedia : %d\n"), total_tersedia);
+    printf_P(PSTR("  - Dipinjam : %d\n"), total_dipinjam);
+    printf_P(PSTR("  - Rusak    : %d\n"), total_rusak);
+    printf_P(PSTR("  - Habis    : %d\n"), total_habis);
+    printf_P(PSTR("--------------------------------------------------\n"));
+    printf_P(PSTR("Statistik per Kategori:\n"));
     for (int i = 0; i < unique_categories; i++) {
-        printf("  - %-15s: %d jenis\n", categories[i], category_counts[i]);
+        printf_P(PSTR("  - %-15s: %d jenis\n"), categories[i], category_counts[i]);
     }
-    printf("==================================================\n");
+    printf_P(PSTR("==================================================\n"));
 }

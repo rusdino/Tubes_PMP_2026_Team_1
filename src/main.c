@@ -1,8 +1,13 @@
 #include <stddef.h>
+#include <avr/pgmspace.h>
 #include "menu.h"
 #include "delete.h"
+#include "uart.h"
 
 int main() {
+    // Initialize serial communication
+    uart_init(9600);
+
     dataset* database = NULL;
     
     // Seed initial mock data

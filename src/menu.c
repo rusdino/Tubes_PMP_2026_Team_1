@@ -1,5 +1,6 @@
 #include "menu.h"
 #include <stdio.h>
+#include <avr/pgmspace.h>
 #include <stdlib.h>
 #include <string.h>
 #include "add.h"
@@ -7,6 +8,7 @@
 #include "find_and_update.h"
 #include "show.h"
 #include "summary.h"
+#include "uart.h"
 
 void seed_data(dataset** head) {
     add_item(head, 101, "Arduino Uno R3", "Mikrokontroler", 15, "Rak A1", 15, 0, 0, "Laboratorium", "Ahmad");
@@ -25,26 +27,22 @@ void menu_loop(dataset** head) {
     int running = 1;
 
     while (running) {
-        printf("\n==================================================\n");
-        printf("   SISTEM INVENTARISASI EMBEDDED SYSTEMS LAB     \n");
-        printf("==================================================\n");
-        printf("1. Tambah Data Barang Baru\n");
-        printf("2. Hapus Data Barang\n");
-        printf("3. Cari Data Barang Berdasarkan ID\n");
-        printf("4. Perbarui Jumlah Stok Barang\n");
-        printf("5. Perbarui Status Barang\n");
-        printf("6. Tampilkan Seluruh Data Inventaris\n");
-        printf("7. Tampilkan Ringkasan Statistik\n");
-        printf("8. Keluar\n");
-        printf("==================================================\n");
-        printf("Pilih Menu (1-8): ");
+        printf_P(PSTR("\n==================================================\n"));
+        printf_P(PSTR("   SISTEM INVENTARISASI EMBEDDED SYSTEMS LAB     \n"));
+        printf_P(PSTR("==================================================\n"));
+        printf_P(PSTR("1. Tambah Data Barang Baru\n"));
+        printf_P(PSTR("2. Hapus Data Barang\n"));
+        printf_P(PSTR("3. Cari Data Barang Berdasarkan ID\n"));
+        printf_P(PSTR("4. Perbarui Jumlah Stok Barang\n"));
+        printf_P(PSTR("5. Perbarui Status Barang\n"));
+        printf_P(PSTR("6. Tampilkan Seluruh Data Inventaris\n"));
+        printf_P(PSTR("7. Tampilkan Ringkasan Statistik\n"));
+        printf_P(PSTR("8. Keluar\n"));
+        printf_P(PSTR("==================================================\n"));
+        printf_P(PSTR("Pilih Menu (1-8): "));
 
-        if (scanf("%d", &pilihan) != 1) {
-            printf("[ERROR] Masukan tidak valid.\n");
-            clear_buffer();
-            continue;
-        }
-        clear_buffer();
+        pilihan = read_int();
+
 
         switch (pilihan) {
             case 1:
@@ -69,11 +67,11 @@ void menu_loop(dataset** head) {
                 show_summary(*head);
                 break;
             case 8:
-                printf("Keluar dari program. Sampai jumpa!\n");
+                printf_P(PSTR("Keluar dari program. Sampai jumpa!\n"));
                 running = 0;
                 break;
             default:
-                printf("[ERROR] Pilihan menu tidak valid.\n");
+                printf_P(PSTR("[ERROR] Pilihan menu tidak valid.\n"));
         }
     }
 }

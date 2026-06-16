@@ -1,15 +1,12 @@
 #include "delete.h"
 #include <stdlib.h>
+#include <avr/pgmspace.h>
 #include <stdio.h>
-
-static void clear_input_buffer() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
+#include "uart.h"
 
 void delete_item(dataset** head, int id){
     if (*head == NULL){
-        printf("[ERROR] List empty\n");
+        printf_P(PSTR("[ERROR] List empty\n"));
         return;
     }
     
@@ -17,7 +14,7 @@ void delete_item(dataset** head, int id){
         dataset* temp = *head;
         *head = (*head)->next;
         free(temp);
-        printf("[SUCCESS] Barang dengan ID %d berhasil dihapus.\n", id);
+        printf_P(PSTR("[SUCCESS] Barang dengan ID %d berhasil dihapus.\n"), id);
     }
     else {
         dataset* prev = *head;
@@ -29,27 +26,22 @@ void delete_item(dataset** head, int id){
         if (now != NULL){
             prev->next = now->next;
             free(now);
-            printf("[SUCCESS] Barang dengan ID %d berhasil dihapus.\n", id);
+            printf_P(PSTR("[SUCCESS] Barang dengan ID %d berhasil dihapus.\n"), id);
         }
         else {
-            printf("[ERROR] ID %d tidak ditemukan.\n", id);
+            printf_P(PSTR("[ERROR] ID %d tidak ditemukan.\n"), id);
         }
     }
 }
 
 void delete_item_from_input(dataset** head) {
     if (*head == NULL) {
-        printf("[ERROR] List kosong. Tidak ada barang yang bisa dihapus.\n");
+        printf_P(PSTR("[ERROR] List kosong. Tidak ada barang yang bisa dihapus.\n"));
         return;
     }
     int id;
-    printf("Masukkan ID Barang yang akan dihapus: ");
-    if (scanf("%d", &id) != 1) {
-        printf("[ERROR] ID tidak valid.\n");
-        clear_input_buffer();
-        return;
-    }
-    clear_input_buffer();
+    printf_P(PSTR("Masukkan ID Barang yang akan dihapus: "));
+    id = read_int();
     delete_item(head, id);
 }
 
@@ -64,4 +56,4 @@ void free_database(dataset** head) {
         free(temp);
     }
     *head = NULL;
-}
+}
