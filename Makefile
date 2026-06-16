@@ -11,9 +11,9 @@ CFLAGS = -Wall -Wextra -std=c99 -O2
 TARGET = inventaris
 
 # Source and Object Files
-SRCS = main.c add.c delete.c find_and_update.c show.c summary.c
+SRCS = main.c add.c delete.c find_and_update.c show.c summary.c menu.c
 OBJS = $(SRCS:.c=.o)
-HEADERS = add.h dataset.h delete.h find_and_update.h show.h summary.h
+HEADERS = add.h dataset.h delete.h find_and_update.h show.h summary.h menu.h
 
 # ------------------------------------------------------------------------------
 # Platform Detection and Shell Compatibility
