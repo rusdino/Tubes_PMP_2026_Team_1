@@ -15,13 +15,18 @@ void update_status(dataset** list, int id, int tersedia, int dipinjam, int rusak
     if (*list != NULL){
         dataset* updated_node;
         find(*list, id, &updated_node);
-        if (updated_node != NULL){
-            updated_node->status.dipinjam = dipinjam;
-            updated_node->status.tersedia = tersedia;
-            updated_node->status.rusak = rusak;
+        if (tersedia + dipinjam + rusak != updated_node->jumlah_stok){
+            printf("[ERROR] Total status (%d) tidak sama dengan jumlah stok saat ini (%d)!\n", (tersedia + dipinjam + rusak), updated_node->jumlah_stok);
         }
         else {
-            printf("ID not found\n");
+            if (updated_node != NULL){
+                updated_node->status.dipinjam = dipinjam;
+                updated_node->status.tersedia = tersedia;
+                updated_node->status.rusak = rusak;
+            }
+            else {
+                printf("ID not found\n");
+            }
         }
     }
     else {
