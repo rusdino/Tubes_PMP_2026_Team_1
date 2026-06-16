@@ -27,17 +27,24 @@ void update_status(dataset** list, int id, char status[]){
     }
 }
 
-void update_stock(dataset** list, int id, int amount){
+void update_stock(dataset** list, int id, int amount, char mode){
     if (*list != NULL){
         dataset* updated_node;
         find(*list, id, &updated_node);
         if (updated_node != NULL){
-            if (updated_node->jumlah_stok - amount <0){
-                printf ("Requirement amount not available\n");
-                printf ("Available stock %d\n", updated_node->jumlah_stok);
+            if (mode == '-'){
+                if (updated_node->jumlah_stok - amount <0){
+                    printf ("Requirement amount not available\n");
+                    printf ("Available stock %d\n", updated_node->jumlah_stok);
+                }
+                else {
+                    updated_node->jumlah_stok -= amount;
+                    printf ("Stock updated\n");
+                    printf ("Current stock of ID %d is %d\n", id, updated_node->jumlah_stok);
+                }
             }
-            else {
-                updated_node->jumlah_stok -= amount;
+            else if (mode == '+'){
+                updated_node->jumlah_stok += amount;
                 printf ("Stock updated\n");
                 printf ("Current stock of ID %d is %d\n", id, updated_node->jumlah_stok);
             }
