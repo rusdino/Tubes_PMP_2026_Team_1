@@ -9,28 +9,18 @@ void delete_item(dataset** head, int id){
         printf_P(PSTR("[ERROR] List empty\n"));
         return;
     }
-    
-    if ((*head)->id == id){
-        dataset* temp = *head;
-        *head = (*head)->next;
+    dataset** curr = head;
+    while (*curr != NULL && (*curr)->id != id) {
+        curr = &((*curr)->next);
+    }
+    if (*curr != NULL) {
+        dataset* temp = *curr;
+        *curr = (*curr)->next;
         free(temp);
         printf_P(PSTR("[SUCCESS] Barang dengan ID %d berhasil dihapus.\n"), id);
     }
     else {
-        dataset* prev = *head;
-        dataset* now = (*head)->next;
-        while (now != NULL && now->id != id){
-            now = now->next;
-            prev = prev->next;
-        }
-        if (now != NULL){
-            prev->next = now->next;
-            free(now);
-            printf_P(PSTR("[SUCCESS] Barang dengan ID %d berhasil dihapus.\n"), id);
-        }
-        else {
-            printf_P(PSTR("[ERROR] ID %d tidak ditemukan.\n"), id);
-        }
+        printf_P(PSTR("[ERROR] ID %d tidak ditemukan.\n"), id);
     }
 }
 

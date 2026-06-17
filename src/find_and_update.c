@@ -116,10 +116,10 @@ void update_stock(dataset** list, int id, int amount, char mode){
         find(*list, id, &updated_node);
         if (updated_node != NULL){
             if (mode == '-'){
-                if (updated_node->status.rusak - amount < 0){
+                if (amount > updated_node->status.rusak){
                     printf_P(PSTR("Rejected: Jumlah barang rusak yang ingin dikurangi (%d) melebihi catatan (%d).\n"), amount, updated_node->status.rusak);
                 }
-                else if (updated_node->jumlah_stok - amount < 0){
+                else if (amount > updated_node->jumlah_stok){
                     printf_P(PSTR("Requirement amount not available\n"));
                     printf_P(PSTR("Available total stock %d\n"), updated_node->jumlah_stok);
                 }

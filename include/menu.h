@@ -22,4 +22,19 @@ void clear_buffer();
  */
 void menu_loop(dataset** head);
 
+/**
+ * @brief Reads semicolon-separated database lines from serial and adds them.
+ * 
+ * @param head Pointer to the head pointer of the linked list.
+ */
+void load_database_from_serial(dataset** head);
+
+/**
+ * @brief Traverses the database and prints items in semicolon-separated format to serial.
+ * 
+ * @param head Pointer to the head of the linked list.
+ */
+void dump_database_to_serial(dataset* head);
+
 #endif
+

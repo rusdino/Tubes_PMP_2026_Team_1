@@ -1,146 +1,128 @@
-# Sistem Inventarisasi Laboratorium Embedded Systems
+# 📦 Sistem Inventarisasi Laboratorium Embedded Systems
 
-Proyek ini adalah implementasi perangkat lunak untuk sistem inventarisasi komponen dan peralatan laboratorium berbasis **Arduino Uno R3 (ATmega328P)**. Sistem ini dikembangkan untuk memenuhi Tugas Besar Pemecahan Masalah dengan Pemrograman (EL2008) dengan menggunakan **Bahasa C murni (modular)** dan berkomunikasi langsung melalui **Serial Monitor** tanpa pustaka C++ bawaan Arduino (`Serial.print`).
+![C](https://img.shields.io/badge/language-C-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Arduino%20Uno-00979C.svg)
+![Memory](https://img.shields.io/badge/optimization-Extreme%20(SRAM%20%3C%205%25)-brightgreen.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
 
----
+Sistem manajemen inventaris komponen dan peralatan laboratorium interaktif berbasis **Arduino Uno R3 (ATmega328P)**. Proyek ini dikembangkan murni menggunakan **Bahasa C** (*Bare Metal / Register-level UART*) tanpa mengandalkan *library* bawaan Arduino C++ (seperti `Serial.print`). 
 
-## 📌 Fitur Utama
-
-Sistem ini beroperasi secara interaktif via Serial Monitor dan mendukung fungsi-fungsi inventarisasi berikut:
-1. **Tambah Data Barang Baru**: Mendaftarkan barang baru ke dalam memori dinamis (*linked list*).
-2. **Hapus Data Barang**: Menghapus data barang tertentu berdasarkan ID barang, mendukung penanganan penghapusan di awal (*head*), tengah (*middle*), maupun akhir (*tail*) list secara aman tanpa kebocoran memori.
-3. **Cari Data Barang**: Mencari komponen spesifik berdasarkan ID uniknya dan menampilkan detail data secara lengkap.
-4. **Perbarui Stok Barang**: Melakukan penambahan stok baru (+) atau pengurangan/pembuangan stok rusak (-) secara dinamis.
-5. **Perbarui Status Barang**: Mengubah proporsi status komponen (Tersedia, Dipinjam, Rusak, Habis) secara langsung.
-6. **Tampilkan Database**: Menampilkan seluruh data inventaris yang tersimpan dalam format tabel yang rapi di Serial Monitor.
-7. **Ringkasan Inventaris**: Menghitung statistik global seperti total jenis komponen, jumlah total unit fisik, pengelompokan berdasarkan kategori, dan status barang.
+Proyek ini dibuat untuk memenuhi Tugas Besar Pemecahan Masalah dengan Pemrograman (EL2008).
 
 ---
 
-## ⚙️ Spesifikasi Teknis & Optimasi Memori
-
-* **Mikrokontroler**: Arduino Uno R3 (ATmega328P) — **SRAM: 2 KB**, **Flash: 32 KB**.
-* **Komunikasi Serial**: UART register-level murni (Baud rate **9600**, format 8N1). standard I/O streams C (`stdin`/`stdout`) langsung diarahkan ke register UART mikrokontroler.
-* **Struktur Data**: Singly Linked List murni dengan alokasi memori dinamis (`malloc` & `free`).
-* **Optimasi SRAM (PROGMEM)**:
-  Karena keterbatasan SRAM Arduino Uno yang hanya 2KB, proyek ini menggunakan optimasi memori Flash (`pgmspace.h`). Semua string literal, menu CLI, dan string format cetakan disimpan langsung di dalam Flash (menggunakan `printf_P` dan `PSTR`), sehingga konsumsi SRAM statis berkurang dari **155% menjadi hanya 11.2% (229 byte)**.
+## 📑 Daftar Isi
+- [Fitur Utama](#-fitur-utama)
+- [Spesifikasi Teknis & Optimasi](#-spesifikasi-teknis--optimasi)
+- [Struktur Direktori](#-struktur-direktori)
+- [Persiapan & Instalasi](#-persiapan--instalasi)
+- [Cara Penggunaan](#-cara-penggunaan)
+- [Pengelolaan Database (Python)](#-pengelolaan-database-python)
+- [Troubleshooting](#-troubleshooting)
 
 ---
 
-## 📁 Struktur Berkas Proyek
+## ✨ Fitur Utama
 
-Proyek ini menggunakan struktur modular C dengan pemisahan berkas `.c` dan `.h` yang terstandarisasi:
+- **Manajemen Data Dinamis**: Menambahkan, mencari, dan menghapus data alat/komponen berbasis algoritma *Singly Linked List* yang efisien.
+- **Kendali Stok & Status**: Memperbarui jumlah stok dan mendistribusikan status barang secara aktual (Tersedia, Dipinjam, Rusak).
+- **Tampilan Tabel Serial**: Menampilkan seluruh data inventaris dalam format tabel antarmuka yang rapi secara langsung di Serial Monitor.
+- **Ringkasan Cerdas**: Menghitung statistik inventaris global secara otomatis (total unit fisik, rasio jenis komponen, klasifikasi kategori).
+- **Manajemen Memori Aman**: Mencegah *Heap Overflow* (`malloc` protection) dan kebocoran memori pada lingkungan *resource-constrained*.
+
+---
+
+## ⚙️ Spesifikasi Teknis & Optimasi
+
+Proyek ini menonjolkan arsitektur yang sangat ramping karena keterbatasan memori pada mikrokontroler.
+
+* **Perangkat Keras**: Arduino Uno R3 (ATmega328P).
+* **Komunikasi**: Register-level UART (Baud rate **9600**, format 8N1) yang dipetakan langsung pada standar input/output (`stdin`/`stdout`).
+* **Alokasi Memori**: Dinamis menggunakan ruang sempit memori SRAM (total 2 KB).
+* **Extreme Memory Optimization**: 
+  - Konsumsi RAM ditekan secara ekstrem hingga **~3.1% (63 bytes)** saat *idle*.
+  - Pemindahan data statis secara menyeluruh: teks menu peringatan, judul tabel, serta *formatting string* diletakkan ke *Flash Memory* (PROGMEM) memanfaatkan pustaka `<avr/pgmspace.h>`.
+  - Optimalisasi bit dan *struct*: Penyesuaian ukuran dan batasan karakter pada masing-masing entri barang (*node*) untuk menghemat *byte-by-byte*.
+
+---
+
+## 📂 Struktur Direktori
+
+Sistem ini menganut standar arsitektur *modular C* dengan pemisahan berkas *header* dan *source* yang jelas:
 
 ```text
 Tubes_PMP_2026_Team_1/
-├── include/                   # Berkas Header (.h)
-│   ├── dataset.h              # Definisi struktur data komponen (Linked List)
-│   ├── uart.h                 # Driver UART register-level dan fungsi input aman
-│   ├── menu.h                 # Loop menu dan fungsi seeding mock data
-│   ├── add.h                  # Fungsi tambah barang ke database
-│   ├── delete.h               # Fungsi hapus barang dan free memory
-│   ├── find_and_update.h      # Fungsi pencarian, update stok, dan update status
-│   ├── show.h                 # Fungsi mencetak tabel database
-│   └── summary.h              # Fungsi analisis data & rekapitulasi statistik
-├── src/                       # Berkas Source Code (.c)
-│   ├── main.c                 # Entry point utama program
-│   ├── uart.c                 # Implementasi driver UART register-level dan input helper
-│   ├── menu.c                 # Logika loop interaksi menu utama
-│   ├── add.c                  # Logika registrasi data baru
-│   ├── delete.c               # Logika pelepasan node linked list
-│   ├── find_and_update.c      # Logika pencarian data dan modifikasi stok/status
-│   ├── show.c                 # Logika rendering tabel
-│   └── summary.c              # Logika kalkulator agregasi data
-├── Makefile                   # Otomatisasi pio build, upload, dan monitor
-├── platformio.ini             # Konfigurasi PlatformIO untuk target Board Arduino Uno
-└── README.md                  # Dokumentasi proyek
+├── include/                   # Deklarasi fungsi dan struktur data (.h)
+│   ├── dataset.h              # Definisi ukuran struct Linked List
+│   ├── uart.h                 # Driver UART low-level
+│   └── ...                    # Modul-modul fungsional lainnya
+├── src/                       # Implementasi logika utama (.c)
+│   ├── main.c                 # Entry point dan Main Loop program
+│   ├── uart.c                 # Implementasi stream input/output Serial
+│   └── ...                    # Logika CRUD & rendering antarmuka
+├── lib/                       # Berkas Seed Data inventaris (*.csv)
+├── test/                      # Direktori ekspor/backup database (.csv)
+├── manage_serial.py           # Skrip pengelola serial/database dinamis
+├── platformio.ini             # Konfigurasi PlatformIO & target Board
+└── Makefile                   # Sistem otomasi utilitas proyek
 ```
 
 ---
 
-## 🛠️ Persiapan Lingkungan (Setup Environment)
+## 🚀 Persiapan & Instalasi
 
-Untuk mengompilasi dan mengunggah kode ke Arduino Uno, Anda memerlukan **PlatformIO Core (CLI)**.
+Proyek ini dikelola memanfaatkan **PlatformIO CLI**. Pastikan Anda sudah menginstal platform tersebut melalui ekstensi VS Code atau CLI mandiri.
 
-### Langkah 1: Instalasi PlatformIO Core
-Jika Anda menggunakan VS Code, instal ekstensi **PlatformIO IDE**. Ekstensi ini secara otomatis akan memasang PlatformIO Core.
-Di Windows, executable PlatformIO biasanya berada di lokasi:
+### 1. Konfigurasi Lingkungan (Windows)
+Jika Anda menggunakan terminal Command Prompt / PowerShell murni, pastikan PlatformIO diatur dalam Environment Variables `PATH` sistem Anda:
 ```text
 C:\Users\<Username>\.platformio\penv\Scripts\
 ```
 
-### Langkah 2: Menambahkan PlatformIO ke PATH System (Opsional)
-Agar dapat memanggil perintah `pio` langsung dari PowerShell/CMD/Terminal:
-1. Cari Windows Search: *Environment Variables* (Edit variabel lingkungan sistem).
-2. Di bagian *User Variables*, pilih `Path` lalu klik **Edit**.
-3. Klik **New** dan masukkan path berikut (sesuaikan `<Username>` Anda):
-   ```text
-   %USERPROFILE%\.platformio\penv\Scripts
+---
+
+## 💻 Cara Penggunaan
+
+Gunakan terminal atau utilitas *GNU Make* di terminal Anda untuk menjalankan proses build secara instan.
+
+| Perintah Makefile | Perintah PlatformIO (Alternatif) | Deskripsi Tindakan |
+| :--- | :--- | :--- |
+| `make build` | `pio run` | Mengompilasi seluruh *source code* modular |
+| `make upload` | `pio run -t upload` | Melakukan *flash firmware* ke Arduino Uno |
+| `make monitor` | `pio device monitor` | Membuka antarmuka Serial Monitor bawaan |
+| `make run` | - | Mengompilasi, *upload*, sekaligus membuka monitor |
+| `make clean` | `pio run -t clean` | Membersihkan *cache object* kompilasi sebelumnya |
+
+*Catatan: Konfigurasi upload secara spesifik dipetakan ke port **COM23** (lihat `platformio.ini`). Sesuaikan port tersebut bila menggunakan Arduino di komputer yang berbeda.*
+
+---
+
+## 🗄️ Pengelolaan Database (Python)
+
+Program ini menyertakan utilitas eksternal cerdas, `manage_serial.py`, yang mengotomatisasi injeksi (*seeding*) puluhan data inventaris ke memori RAM Arduino, serta pencadangan data (*backup*) ke PC.
+
+1. **Penting**: Tutup semua antarmuka Serial Monitor reguler yang berjalan sebelum mengeksekusi skrip ini.
+2. Jalankan utilitas pengelola melalui terminal PC Anda:
+   ```bash
+   make manage
+   # atau
+   python manage_serial.py
    ```
-4. Klik **OK** dan buka kembali terminal baru Anda.
+3. **Data Seeding**: Ketik angka `8` (opsi `Load Seed`) untuk mendorong puluhan baris data bawaan (dari direktori `lib/`) tanpa perlu mengetik ulang ID dan atribut barang secara manual.
+4. **Data Exporting**: Anda dapat menyimpan kondisi operasional inventaris mikrokontroler terakhir sebagai berkas log `.csv` di dalam direktori `test/`.
 
 ---
 
-## 🚀 Kompilasi, Mengunggah, dan Memonitor
+## 🛡️ Troubleshooting
 
-Setelah lingkungan siap dan Arduino Uno terhubung ke port **COM23**, Anda dapat menggunakan terminal atau Makefile.
-
-### 1. Menggunakan Perintah PlatformIO CLI Langsung
-
-Jalankan perintah-perintah berikut di folder root proyek:
-
-* **Kompilasi Proyek (Build):**
-  ```powershell
-  & "C:\Users\<Username>\.platformio\penv\Scripts\pio.exe" run
-  ```
-  *(Atau cukup ketik `pio run` jika pio sudah masuk ke PATH).*
-
-* **Unggah ke Arduino Uno (COM23):**
-  ```powershell
-  & "C:\Users\<Username>\.platformio\penv\Scripts\pio.exe" run -t upload
-  ```
-  *(PlatformIO akan mendeteksi target COM23 dari file `platformio.ini` dan mem-flash firmware).*
-
-* **Membuka Serial Monitor:**
-  ```powershell
-  & "C:\Users\<Username>\.platformio\penv\Scripts\pio.exe" device monitor
-  ```
-  *(Serial Monitor akan terbuka pada baudrate 9600).*
+- **Error: Access is denied (COM Port)**
+  *Penyebab:* Port serial masih diblokir oleh interaksi yang sedang berjalan (seperti *Terminal Monitor* yang belum dimatikan atau proses Python yang macet).
+  *Solusi:* Tutup paksa sesi terminal tersebut sebelum melakukan proses `upload`.
+  
+- **Serial Monitor *Freeze* atau Terhenti Tiba-tiba**
+  *Penyebab:* Penambahan muatan data yang tak terhingga akhirnya menghabiskan sisa memori dinamis 2 KB (SRAM Exhaustion).
+  *Solusi:* Sistem kami telah menerapkan mekanisme deteksi limit memori yang ketat (*malloc verification*). Kurangi jumlah muatan data atau pantau notifikasi "Memori Hampir Habis" pada Serial Monitor.
 
 ---
 
-### 2. Menggunakan GNU Make (Makefile)
-
-Jika sistem Anda sudah terpasang utilitas `make` (misal via MinGW, Git Bash, WSL, dll), Anda dapat memanfaatkan perintah singkatan berikut:
-
-* **Kompilasi Kode:**
-  ```bash
-  make build
-  ```
-* **Mengunggah Firmware:**
-  ```bash
-  make upload
-  ```
-* **Membuka Serial Monitor:**
-  ```bash
-  make monitor
-  ```
-* **Mengunggah sekaligus Memonitor (Sangat Direkomendasikan):**
-  ```bash
-  make run
-  ```
-* **Membersihkan Berkas Sampah Hasil Kompilasi:**
-  ```bash
-  make clean
-  ```
-
----
-
-## ⚠️ Penanganan Masalah & Error Handling
-
-Program ini dilengkapi dengan deteksi edge cases untuk menjamin kestabilan mikrokontroler:
-* **ID Duplikat**: Sistem akan menolak penambahan barang jika ID yang diinput sudah ada di database.
-* **Memori Penuh (Null Pointer)**: Sistem akan menangkap kegagalan alokasi `malloc()` dan menampilkan pesan error jika RAM Arduino hampir habis saat penambahan data.
-* **Pencarian & Hapus ID Tidak Ditemukan**: Menampilkan pesan error yang ramah dan membatalkan operasi tanpa merusak list.
-* **Pengurangan Stok Melebihi Batas**: Mencegah stok menjadi bernilai negatif dan menjaga konsistensi nilai status (Tersedia + Dipinjam + Rusak = Total Stok).
-* **Operasi pada Data Kosong**: Menampilkan peringatan khusus jika pengguna mencoba menghapus, mencari, memperbarui, atau menampilkan data pada database yang belum memiliki data.
+*Dipersembahkan untuk Tugas Besar EL2008 © 2026 Team 1*

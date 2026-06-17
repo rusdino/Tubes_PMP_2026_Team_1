@@ -2,6 +2,8 @@
 #include <avr/io.h>
 #include <stdio.h>
 
+volatile uint8_t uart_echo_enabled = 1;
+
 // Function to transmit a character over UART
 static int uart_putchar(char c, FILE *stream) {
     // Convert \n to \r\n for serial terminals to render new lines correctly
@@ -22,6 +24,17 @@ static int uart_getchar(FILE *stream) {
         while (!(UCSR0A & (1 << RXC0)));
         c = UDR0;
         
+        // Handle Backspace / Delete
+        if (c == '\b' || c == 127) {
+            if (uart_echo_enabled) {
+                // Send backspace, space, backspace to erase character visually
+                uart_putchar('\b', stream);
+                uart_putchar(' ', stream);
+                uart_putchar('\b', stream);
+            }
+            return '\b';
+        }
+        
         // Handle \r\n line endings: skip \n if it immediately follows \r
         if (c == '\n' && last_char == '\r') {
             last_char = c;
@@ -33,8 +46,10 @@ static int uart_getchar(FILE *stream) {
             c = '\n';
         }
         
-        // Echo back character so user can see it in terminal
-        uart_putchar(c, stream);
+        // Echo back character if enabled
+        if (uart_echo_enabled) {
+            uart_putchar(c, stream);
+        }
         return c;
     }
 }

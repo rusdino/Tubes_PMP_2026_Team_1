@@ -17,18 +17,18 @@ void show(dataset* list){
         return;
     }
     
-    int table_width = 139;
+    int table_width = 106;
     
     print_line(table_width);
     printf_P(PSTR("%*s\n"), (table_width + 8) / 2, "DATABASE");
     print_line(table_width);
-    printf_P(PSTR("ID    | NAMA                      | KATEGORI        | STOK  | STATUS(T/D/R) | LOKASI          | PEMILIK              | PIC                 \n"));
+    printf_P(PSTR("ID    | NAMA                | KATEGORI       | STOK  | STATUS(T/D/R) | LOKASI       | PEMILIK      | PIC  \n"));
     print_line(table_width);
     
     while (temp != NULL){
-        char status_str[20];
-        snprintf_P(status_str, sizeof(status_str),PSTR("%d/%d/%d"), temp->status.tersedia, temp->status.dipinjam, temp->status.rusak);
-        printf_P(PSTR("%-5d | %-25s | %-15s | %-5d | %-13s | %-15s | %-20s | %-20s\n"), temp->id, temp->nama, temp->kategori, temp->jumlah_stok, status_str, temp->lokasi_penyimpanan, temp->pemilik, temp->pic);        
+        char status_str[15];
+        snprintf_P(status_str, sizeof(status_str), PSTR("%d/%d/%d"), temp->status.tersedia, temp->status.dipinjam, temp->status.rusak);
+        printf_P(PSTR("%-5d | %-19s | %-14s | %-5d | %-13s | %-12s | %-12s | %-5s\n"), temp->id, temp->nama, temp->kategori, temp->jumlah_stok, status_str, temp->lokasi_penyimpanan, temp->pemilik, temp->pic);        
         temp = temp->next;
     }
     print_line(table_width);

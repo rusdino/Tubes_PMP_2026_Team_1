@@ -52,5 +52,10 @@ clean:
 	@echo "Cleaning build artifacts..."
 	$(PIO) run -t clean
 
-.PHONY: all build upload monitor run clean
+# Run Database and Seed Manager CLI
+manage:
+	python manage_serial.py
+
+.PHONY: all build upload monitor run clean manage
+
 

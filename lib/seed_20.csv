@@ -1,0 +1,20 @@
+101;Arduino Uno R3;Mikrokontroler;5;3;1;1;Rak A1;Laboratorium;Ahmad
+102;Sensor Ultrasonik;Sensor;12;9;1;2;Rak A2;Laboratorium;Budi
+103;Raspberry Pi 4;SBC;19;14;2;3;Kotak B1;Laboratorium;Cici
+104;Motor Servo SG90;Actuator;1;0;0;1;Kotak B2;Laboratorium;Dodi
+105;ESP32 DevKit;Mikrokontroler;8;6;1;1;Kotak C1;Laboratorium;Eka
+106;Sensor DHT11;Sensor;15;11;2;2;Meja 1;Laboratorium;Fani
+107;Motor Driver L298N;Driver;22;16;3;3;Lemari Utama;Laboratorium;Gita
+108;LCD 16x2 I2C;Display;4;3;0;1;Rak A1;Laboratorium;Hadi
+109;Kabel Jumper M-F;Kabel;11;8;1;2;Rak A2;Laboratorium;Indra
+110;Breadboard 830;Aksesoris;18;13;2;3;Kotak B1;Laboratorium;Joko
+111;Sensor LDR;Sensor;0;0;0;0;Kotak B2;Laboratorium;Ahmad
+112;Active Buzzer;Actuator;7;5;1;1;Kotak C1;Laboratorium;Budi
+113;Relay Module 4Ch;Modul;14;10;2;2;Meja 1;Laboratorium;Cici
+114;ESP8266 NodeMCU;Mikrokontroler;21;15;3;3;Lemari Utama;Laboratorium;Dodi
+115;Multimeter Digital;Alat Ukur;3;2;0;1;Rak A1;Laboratorium;Eka
+116;Solder Listrik;Alat Kerja;10;7;1;2;Rak A2;Laboratorium;Fani
+117;Timah Solder;Bahan;17;12;2;3;Kotak B1;Laboratorium;Gita
+118;Baterai 18650;Power;24;18;3;3;Kotak B2;Laboratorium;Hadi
+119;Step Down LM2596;Modul;6;4;1;1;Kotak C1;Laboratorium;Indra
+120;OLED Display 0.96;Display;13;9;2;2;Meja 1;Laboratorium;Joko

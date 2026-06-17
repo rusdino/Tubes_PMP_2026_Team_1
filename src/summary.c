@@ -16,9 +16,9 @@ void show_summary(dataset* list) {
     int total_tersedia = 0;
     int total_habis = 0;
 
-    // For counting categories (max 20 categories to suit Arduino Uno SRAM limits)
-    char categories[20][20];
-    int category_counts[20] = {0};
+    // For counting categories (max 15 categories to suit Arduino Uno SRAM limits)
+    char categories[15][15];
+    int category_counts[15] = {0};
     int unique_categories = 0;
 
     dataset* temp = list;
@@ -42,7 +42,7 @@ void show_summary(dataset* list) {
                 break;
             }
         }
-        if (!found && unique_categories < 20) {
+        if (!found && unique_categories < 15) {
             strncpy(categories[unique_categories], temp->kategori, sizeof(categories[unique_categories]) - 1);
             categories[unique_categories][sizeof(categories[unique_categories]) - 1] = '\0';
             category_counts[unique_categories] = 1;

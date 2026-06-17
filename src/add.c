@@ -64,15 +64,16 @@ void add_item(dataset** head, int id, const char nama[], const char kategori[], 
 
 void add_item_from_input(dataset** head) {
     int id;
-    char nama[50];
-    char kategori[20];
+    char nama[21];
+    char kategori[15];
     int jumlah_stok;
-    char lokasi_penyimpanan[20];
+    char lokasi_penyimpanan[13];
     int tersedia;
     int dipinjam;
     int rusak;
-    char pemilik[50];
-    char pic[50];
+    char pemilik[13];
+    char pic[6];
+
 
     printf_P(PSTR("\n=== TAMBAH DATA INVENTARIS BARU ===\n"));
     

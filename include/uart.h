@@ -2,6 +2,9 @@
 #define UART_H
 
 #include <stdio.h>
+#include <stdint.h>
+
+extern volatile uint8_t uart_echo_enabled;
 
 /**
  * @brief Initializes the UART serial port and redirects stdin/stdout to it.
