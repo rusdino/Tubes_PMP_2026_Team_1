@@ -1,7 +1,5 @@
 #include "menu.h"
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "add.h"
 #include "delete.h"
 #include "find_and_update.h"
@@ -15,7 +13,7 @@ void seed_data(dataset** head) {
     add_item(head, 104, "Motor Servo SG90", "Actuator", 0, "Kotak C1", 0, 0, 0, "Laboratorium", "Dodi");
 }
 
-void clear_buffer() {
+static void clear_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
@@ -44,6 +42,7 @@ void menu_loop(dataset** head) {
             clear_buffer();
             continue;
         }
+
         clear_buffer();
 
         switch (pilihan) {
