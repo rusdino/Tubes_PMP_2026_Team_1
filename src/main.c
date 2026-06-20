@@ -11,7 +11,7 @@ int main() {
     dataset* database = NULL;
     
     // Seed initial mock data
-    seed_data(&database);
+   // seed_data(&database);
     
     // Enter the interactive CLI loop
     menu_loop(&database);

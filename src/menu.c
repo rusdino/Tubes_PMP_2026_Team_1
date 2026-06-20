@@ -9,7 +9,7 @@
 #include "show.h"
 #include "summary.h"
 #include "uart.h"
-
+/*
 void seed_data(dataset** head) {
     char nama[21];
     char kategori[15];
@@ -45,7 +45,7 @@ void seed_data(dataset** head) {
     strcpy_P(pic, PSTR("Dodi"));
     add_item(head, 104, nama, kategori, 0, lokasi, 0, 0, 0, pemilik, pic);
 }
-
+*/
 
 void clear_buffer() {
     int c;
